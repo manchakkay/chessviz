@@ -2,6 +2,7 @@
 
 int main()
 {
+    //ПЕРЕМЕННЫЕ
     int type;
     char type_buffer[1];
     /*
@@ -21,7 +22,7 @@ int main()
 	"" - Пешка
     */
     int act;
-    char act_buffer[4]
+    char act_buffer[4];
     /*
 	Действие
 	"0" - Шах
@@ -29,7 +30,7 @@ int main()
 	"2" - Взятие на проходе
     */
     int opt;
-    char pawn-swap[1];
+    char pawn_swap[1];
     /*
 	Дополнения:
 	"0" - Отсутствуют
@@ -56,4 +57,22 @@ int main()
 	Размен:
 	<step> - строка для буферизации одного размена
     */
+    
+    //КОД
+    
+    FILE *file;
+    char *temp;
+    
+    file = fopen("chesspart.txt","r");
+    
+    while(1){
+	temp = fgets(step,sizeof(step),file);
+	if (temp == NULL){
+	    break;
+	} else {
+	    printf("%s",step);
+	}
+    }
+    
+    return 0;
 }
