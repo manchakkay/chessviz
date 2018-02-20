@@ -1,5 +1,22 @@
 #include <stdio.h>
 
+#define TC_W   "\033[0m"
+#define TC_C   "\033[0;36m"
+#define BC_W   "\033[1;37m"
+
+void printfield(char* field[8][8])
+{
+    int i,j;
+    for ( i = 0; i < 8; i++ ){
+	printf("%s%d%s", TC_C, i, BC_W);
+	for ( j = 0; j < 8; j++ ){
+	    printf("%2c",*field[i][j]);
+	}
+	printf("\n");
+    }
+    printf("%s  a b c d e f g h%s\n", TC_C, TC_W);
+}
+
 int main()
 {
     //ПЕРЕМЕННЫЕ
@@ -70,21 +87,11 @@ int main()
     */
     //ФУНКЦИИ
 
-    void printfield()
-    {
-	int i,j;
-	for ( i = 0, i < 8, i++ ){
-		for ( j = 0, j < 8, j++ ){
-		    printf("%3c",field[i][j]);
-		}
-	printf("\n");
-	}
-    }
 
     //КОД
     
-    void printfield();
-
+    void printfield(char* [8][8]);
+    printfield(field);
     FILE *file;
     char *temp;
     char filename[256];
