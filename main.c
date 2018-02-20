@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define TC_W   "\033[0m"
 #define BC_C   "\033[1;36m"
@@ -8,7 +9,7 @@ void printfield(char* field[8][8])
 {
     int i,j;
     for ( i = 0; i < 8; i++ ){
-	printf("%s%d%s", BC_C, i, BC_W);
+	printf("%s%d%s", BC_C, 8-i, BC_W);
 	for ( j = 0; j < 8; j++ ){
 	    printf("%2c",*field[i][j]);
 	}
@@ -91,23 +92,34 @@ int main()
     //КОД
     
     void printfield(char* [8][8]);
-    printfield(field);
+
     FILE *file;
     char *temp;
     char filename[256];
+    int loop = 0;
+    int ws = 0;
+    int bs = 0;
     
-    printf("Файл ходов:");
-    fgets(filename,255,stdin);
+    printf("Адрес исходного файла:\n");
+    scanf("%s",&filename);
     file = fopen(filename,"r");
-    
-    while(1){
-	temp = fgets(step,sizeof(step),file);
-	if (temp == NULL){
-	    break;
-	} else {
-	    printf("%s",step);
+    printf("\n");
+
+    if (file){
+	while(1){
+	    temp = fgets(step,sizeof(step),file);
+	    if (temp == NULL){
+		break;
+	    } else {
+	        //Здесь будет работа с файлом записи ходов
+		printf("%s",step);
+		printfield(field);
+		printf("\n");
+	    }
+	    loop++;
 	}
+    } else {
+	printf("Файл по такому адресу не найден");
     }
-    
     return 0;
 }
