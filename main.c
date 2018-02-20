@@ -1,20 +1,20 @@
 #include <stdio.h>
 
 #define TC_W   "\033[0m"
-#define TC_C   "\033[0;36m"
+#define BC_C   "\033[1;36m"
 #define BC_W   "\033[1;37m"
 
 void printfield(char* field[8][8])
 {
     int i,j;
     for ( i = 0; i < 8; i++ ){
-	printf("%s%d%s", TC_C, i, BC_W);
+	printf("%s%d%s", BC_C, i, BC_W);
 	for ( j = 0; j < 8; j++ ){
 	    printf("%2c",*field[i][j]);
 	}
 	printf("\n");
     }
-    printf("%s  a b c d e f g h%s\n", TC_C, TC_W);
+    printf("%s  a b c d e f g h%s\n", BC_C, TC_W);
 }
 
 int main()
