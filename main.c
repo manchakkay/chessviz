@@ -87,11 +87,10 @@ int main()
 	Шахматное поле
     */
     //ФУНКЦИИ
-
-
-    //КОД
     
     void printfield(char* [8][8]);
+    
+    //КОД
 
     FILE *file;
     char *temp;
