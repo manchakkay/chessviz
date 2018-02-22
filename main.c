@@ -18,6 +18,15 @@ void printfield(char* field[8][8])
     printf("%s  a b c d e f g h%s\n", BC_C, TC_W);
 }
 
+int tokenlen(char* token)
+{
+    int i = 0;
+    while ((token[i] != 0) && (token[i] != 10)){
+	i++;
+    }
+    return i;
+}
+
 int main()
 {
     //ПЕРЕМЕННЫЕ
@@ -88,6 +97,7 @@ int main()
     //ФУНКЦИИ
     
     void printfield(char* [8][8]);
+    int tokenlen(char* );
     
     //КОД
 
@@ -116,13 +126,19 @@ int main()
 		    count = 0;
 		};
 		char *token, *last;
+		char temp_token[10];
+		int len;
 		token = strtok_r(step, " ", &last);
 		for(i = 0; i <= count; i++){
-		    //Здесь будет работа с файлом записи ходов
+		    
 		    printf ("%s", token);
 		    if (i != count){
 			printf("\n");
 		    }
+		    
+		    //Здесь ходы разделены, можно с ними работать
+		    len = tokenlen(token);
+		    //Конец работы с ходами, далее вывод
 		    token = strtok_r(NULL, " ", &last);
 		    printfield(field);
 		    printf("\n");
