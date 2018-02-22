@@ -63,8 +63,7 @@ int main()
 	<to> - целевая клетка
 	<castle> - клетка для выполнения рокировки
     */
-    char white[10];
-    char black[10];
+    // char *token;
     /*
 	Ходы игроков(разделяются пробелом):
 	<white> - ход белого (первый)
@@ -83,7 +82,7 @@ int main()
 			{ " ", " ", " ", " ", " ", " ", " ", " " },
 			{ "P", "P", "P", "P", "P", "P", "P", "P" },
 			{ "R", "N", "B", "Q", "K", "B", "N", "R" }};
-    /*
+    /*/*
 	Шахматное поле
     */
     //ФУНКЦИИ
@@ -98,9 +97,10 @@ int main()
     int loop = 0;
     int ws = 0;
     int bs = 0;
+    int tempid, count, i;
     
     printf("Адрес исходного файла:\n");
-    scanf("%s",&filename);
+    scanf("%s",filename);
     file = fopen(filename,"r");
     printf("\n");
 
@@ -110,10 +110,23 @@ int main()
 	    if (temp == NULL){
 		break;
 	    } else {
-	        //Здесь будет работа с файлом записи ходов
-		printf("%s",step);
-		printfield(field);
-		printf("\n");
+		if (strchr(step,' ') != NULL){
+		    count = 1;
+		} else {
+		    count = 0;
+		};
+		char *token, *last;
+		token = strtok_r(step, " ", &last);
+		for(i = 0; i <= count; i++){
+		    //Здесь будет работа с файлом записи ходов
+		    printf ("%s", token);
+		    if (i != count){
+			printf("\n");
+		    }
+		    token = strtok_r(NULL, " ", &last);
+		    printfield(field);
+		    printf("\n");
+		}
 	    }
 	    loop++;
 	}
