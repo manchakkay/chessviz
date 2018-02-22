@@ -27,18 +27,31 @@ int tokenlen(char* token)
     return i;
 }
 
+int searchsym(char* t, int l, char* sym)
+{
+    int i,ta,sa;
+    int c = 0;
+    sa = *sym;
+    for (i = 0; i<l; i++){
+	ta = t[i];
+	if (ta == sa){
+	    c++;
+	}
+    }
+    return c;
+}
+
 int main()
 {
     //ПЕРЕМЕННЫЕ
     int type;
-    char type_buffer[1];
     /*
 	Тип хода
-	"0" - Рокировка
+	"2" - Рокировка
 	"1" - Тихий ход
-	"2" - Взятие клетки
+	"0" - Взятие клетки
     */
-    char figure[1];
+    char* figure;
     /*
 	Вид фигуры
 	"K" - Король
@@ -46,7 +59,7 @@ int main()
 	"R" - Ладья
 	"N" - Конь
 	"B" - Слон
-	"" - Пешка
+	"P" - Пешка
     */
     int act;
     char act_buffer[4];
@@ -72,13 +85,7 @@ int main()
 	<to> - целевая клетка
 	<castle> - клетка для выполнения рокировки
     */
-    // char *token;
-    /*
-	Ходы игроков(разделяются пробелом):
-	<white> - ход белого (первый)
-	<black> - ход чёрного (второй)
-    */
-    char step[22];
+	    char step[22];
     /*
 	Размен:
 	<step> - строка для буферизации одного размена
@@ -98,6 +105,7 @@ int main()
     
     void printfield(char* [8][8]);
     int tokenlen(char* );
+    int searchsym(char* , int, char*);
     
     //КОД
 
@@ -126,7 +134,6 @@ int main()
 		    count = 0;
 		};
 		char *token, *last;
-		char temp_token[10];
 		int len;
 		token = strtok_r(step, " ", &last);
 		for(i = 0; i <= count; i++){
@@ -135,9 +142,24 @@ int main()
 		    if (i != count){
 			printf("\n");
 		    }
-		    
-		    //Здесь ходы разделены, можно с ними работать
+		    //Здесь ходы разделены на токены, можно с ними работать
 		    len = tokenlen(token);
+		    //Определена длина токена, узнаём какая фигура
+		    if (token[0] == 75){
+			figure = "K";
+		    } else if (token[0] == 81){
+			figure = "Q";
+		    } else if (token[0] == 82){
+			figure = "R";
+		    } else if (token[0] == 78){
+			figure = "N";
+		    } else if (token[0] == 66){
+			figure = "B";
+		    } else {
+			figure = "P";
+		    }
+		    //Фигура нам известа, определяем тип хода, используем для этого подготовленную заранее ф-ию(int search sym)
+		    type = searchsym(token, len, "-");
 		    //Конец работы с ходами, далее вывод
 		    token = strtok_r(NULL, " ", &last);
 		    printfield(field);
