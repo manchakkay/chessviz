@@ -5,6 +5,7 @@
 #define BC_C   "\033[1;36m"
 #define BC_W   "\033[1;37m"
 
+//Вывод состояния доски
 void printfield(char* field[8][8])
 {
     int i,j;
@@ -18,6 +19,7 @@ void printfield(char* field[8][8])
     printf("%s  a b c d e f g h%s\n", BC_C, TC_W);
 }
 
+//Определение длины строки с ходом
 int tokenlen(char* token)
 {
     int i = 0;
@@ -27,6 +29,7 @@ int tokenlen(char* token)
     return i;
 }
 
+//Поиск кол-ва символов в строке
 int searchsym(char* t, int l, char* sym)
 {
     int i,ta,sa;
@@ -98,7 +101,7 @@ int main()
 			{ " ", " ", " ", " ", " ", " ", " ", " " },
 			{ "P", "P", "P", "P", "P", "P", "P", "P" },
 			{ "R", "N", "B", "Q", "K", "B", "N", "R" }};
-    /*/*
+    /*
 	Шахматное поле
     */
     //ФУНКЦИИ
@@ -108,7 +111,8 @@ int main()
     int searchsym(char* , int, char*);
     
     //КОД
-
+    
+    //Подготавливаем вторичные переменные
     FILE *file;
     char *temp;
     char filename[256];
@@ -116,28 +120,30 @@ int main()
     int ws = 0;
     int bs = 0;
     int tempid, count, i;
-    
+    //Производим ввод файла с записью ходов
     printf("Адрес исходного файла:\n");
     scanf("%s",filename);
     file = fopen(filename,"r");
     printf("\n");
-
     if (file){
 	while(1){
+	    //Берём одну строку из файла
 	    temp = fgets(step,sizeof(step),file);
 	    if (temp == NULL){
 		break;
 	    } else {
+		//Определяем индекс хода относительно пробела между ними
 		if (strchr(step,' ') != NULL){
 		    count = 1;
 		} else {
 		    count = 0;
 		};
+		//Делим строку одного шага(ход белого и чёрного) на ходы
 		char *token, *last;
 		int len;
 		token = strtok_r(step, " ", &last);
 		for(i = 0; i <= count; i++){
-		    
+		    //Выводим ход в правильном виде, учитывая знак новой строки в конце
 		    printf ("%s", token);
 		    if (i != count){
 			printf("\n");
@@ -160,15 +166,16 @@ int main()
 		    }
 		    //Фигура нам известа, определяем тип хода, используем для этого подготовленную заранее ф-ию(int search sym)
 		    type = searchsym(token, len, "-");
-		    //Конец работы с ходами, далее вывод
-		    token = strtok_r(NULL, " ", &last);
+		    //Конец работы с ходами, далее вывод и переключение строк
 		    printfield(field);
 		    printf("\n");
+		    token = strtok_r(NULL, " ", &last);
 		}
 	    }
 	    loop++;
 	}
     } else {
+	//Ошибка говорящая сама за себя
 	printf("Файл по такому адресу не найден");
     }
     return 0;
