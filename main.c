@@ -3,24 +3,32 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define TC_W   "\033[0m"
-#define BC_C   "\033[1;36m"
-#define BC_W   "\033[1;37m"
-#define BC_R   "\033[1;31m"
-#define BC_Y   "\033[1;33m"
+//Цветовые коды, можно отключить
+char* TC_W = "\033[0m";
+char* BC_R = "\033[1;31m";
+char* BC_Y = "\033[1;33m";
+char* BC_C = "\033[1;36m";
+char* BC_W = "\033[1;37m";
+char* BG_W = "\033[40m\033[1m";
+char* BD_W = "\033[49m\033[1m";
+int showwarning = 1;
 
 //Вывод состояния доски
 void printfield(char* field[8][8])
 {
     int i,j;
     for ( i = 0; i < 8; i++ ){
-	printf("%s%d%s", BC_C, 8-i, BC_W);
+	printf("%s%d%s ", BC_C, 8-i, BC_W);
 	for ( j = 0; j < 8; j++ ){
-	    printf("%2c",*field[i][j]);
+	    if (((i+j)%2) == 1){
+		printf("%s%2c %s",BD_W,*field[i][j],TC_W);
+	    } else {
+		printf("%s%2c %s",BG_W,*field[i][j],TC_W);
+	    }
 	}
 	printf("\n");
     }
-    printf("%s  a b c d e f g h%s\n", BC_C, TC_W);
+    printf("%s   a  b  c  d  e  f  g  h%s\n", BC_C, TC_W);
 }
 
 //Определение длины строки с ходом
@@ -56,11 +64,37 @@ void error(char* red, char* white)
 
 void warning(char* yellow, char* white)
 {
-    printf("%s(Внимание) %s%s%s%s\n",BC_W, BC_Y, yellow, TC_W, white);
+    if (showwarning == 1){
+	printf("%s(Внимание) %s%s%s%s\n",BC_W, BC_Y, yellow, TC_W, white);
+    }
 }
 
-int main()
-{
+int main(int argc, char *argv[])
+{	
+    if( argc == 2 ){
+	if (strcmp(argv[1],"--no-color") == 0){
+	    TC_W = "\033[0m";
+	    BC_R = "\033[1m";
+	    BC_Y = "\033[1m";
+	    BC_C = "\033[1m";
+	    BC_W = "\033[1m";
+	    BG_W = "\033[0m";
+	    BD_W = "\033[0m";
+	} else if (strcmp(argv[1],"--no-format") == 0){
+	    TC_W = "\033[0m";
+	    BC_R = "\033[0m";
+	    BC_Y = "\033[0m";
+	    BC_C = "\033[0m";
+	    BC_W = "\033[0m";
+	    BG_W = "\033[0m";
+	    BD_W = "\033[0m";
+	} else if (strcmp(argv[1],"--no-warning") == 0){
+	    showwarning = 0;
+	} else {
+	    printf("****************************\n\033[1;33mВизуализатор шахматной доски\033[0m\n****************************\nДоступные аргументы запуска:\n\033[1;36m--no-color\033[0m - отключает цветовое форматирование при выводе\n\033[1;36m--no-format\033[0m - отключает цветовое форматирование и полужирные шрифты при выводе\n\033[1;36m--no-warning\033[0m - отключает вывод предупреждений по ходу выполнения программы\n**********************\n\033[1;33mМанчаккай Максим, 2018\033[0m\n**********************\n");
+	    exit(0);
+	}
+    }
     //ПЕРЕМЕННЫЕ
     int type;
     /*
@@ -94,9 +128,9 @@ int main()
 	"0" - Отсутствуют
 	"1" - Пешка превращается в фигуру <pawn-swap>
     */
-    char from[2];
-    char to[2];
-    char castle[2];
+    int from[2];
+    int to[2];
+    int castle[2];
     /*
 	Ячейки:
 	<from> - стартовая клетка
@@ -141,7 +175,7 @@ int main()
     int loop = 0;
     int count, i;
     //Производим ввод файла с записью ходов
-    printf("Адрес исходного файла:\n");
+    printf("%sАдрес исходного файла:%s\n",BG_W,TC_W);
     scanf("%s",filename);
     file = fopen(filename,"r");
     if (file){
@@ -203,16 +237,22 @@ int main()
 		    } else {
 			ps = 0;
 		    }
-		    //Делим ход на точку отправления, прибытия и в случае с рокировкой на точку кастла
-		    from[0] = token[1-ps];
-		    from[1] = token[2-ps];
-		    to[0] = token[4-ps];
-		    to[1] = token[5-ps];
+		    //Делим ход на точку отправления, прибытия и в случае с рокировкой на точку кастла. Переводим всё это в массивы целочисленного типа
+		    from[0] = token[1-ps]-97;
+		    from[1] = 8-(token[2-ps]-48);
+		    to[0] = token[4-ps]-97;
+		    to[1] = 8-(token[5-ps]-48);
 		    if (type == 2){
-			castle[0] = token[7-ps];
-			castle[1] = token[8-ps];
+			castle[0] = token[7-ps]-97;
+			castle[1] = 8-(token[8-ps]-48);
 		    }
-		    printf("\n(%c%c-%c%c)\n",from[0],from[1],to[0],to[1]);
+		    //Обработка ходов
+		    if (type != 2){
+			field[to[1]][to[0]] = field[from[1]][from[0]];
+			field[from[1]][from[0]] = " ";
+		    } else {
+			
+		    }
 		    //Конец работы с ходами, далее вывод
 		    printfield(field);
 		    printf("\n");
