@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #define TC_W   "\033[0m"
 #define BC_C   "\033[1;36m"
 #define BC_W   "\033[1;37m"
+#define BC_R   "\033[1;31m"
+#define BC_Y   "\033[1;33m"
 
 //Вывод состояния доски
 void printfield(char* field[8][8])
@@ -42,6 +46,17 @@ int searchsym(char* t, int l, char* sym)
 	}
     }
     return c;
+}
+
+void error(char* red, char* white)
+{
+    printf("%s(Ошибка) %s%s%s%s\n",BC_W, BC_R, red, TC_W, white);
+    exit(0);
+}
+
+void warning(char* yellow, char* white)
+{
+    printf("%s(Внимание) %s%s%s%s\n",BC_W, BC_Y, yellow, TC_W, white);
 }
 
 int main()
@@ -88,10 +103,15 @@ int main()
 	<to> - целевая клетка
 	<castle> - клетка для выполнения рокировки
     */
-	    char step[22];
+    char step[22];
     /*
 	Размен:
 	<step> - строка для буферизации одного размена
+    */
+    int ended = 0;
+    /*
+	Мат:
+	Определеляет, был ли мат
     */
     char* field[8][8] = {{ "r", "n", "b", "q", "k", "b", "n", "r" },
 			{ "p", "p", "p", "p", "p", "p", "p", "p" },
@@ -109,6 +129,8 @@ int main()
     void printfield(char* [8][8]);
     int tokenlen(char* );
     int searchsym(char* , int, char*);
+    void error(char*, char*);
+    void warning(char*, char*);
     
     //КОД
     
@@ -117,15 +139,13 @@ int main()
     char *temp;
     char filename[256];
     int loop = 0;
-    int ws = 0;
-    int bs = 0;
-    int tempid, count, i;
+    int count, i;
     //Производим ввод файла с записью ходов
     printf("Адрес исходного файла:\n");
     scanf("%s",filename);
     file = fopen(filename,"r");
-    printf("\n");
     if (file){
+	printf("\n");
 	while(1){
 	    //Берём одну строку из файла
 	    temp = fgets(step,sizeof(step),file);
@@ -137,7 +157,7 @@ int main()
 		    count = 1;
 		} else {
 		    count = 0;
-		};
+		}
 		//Делим строку одного шага(ход белого и чёрного) на ходы
 		char *token, *last;
 		int len;
@@ -161,22 +181,38 @@ int main()
 			figure = "N";
 		    } else if (token[0] == 66){
 			figure = "B";
-		    } else {
+		    } else if (tolower(token[0]) == token[0]){
 			figure = "P";
+		    } else {
+			error("Невозможно определить фигуру",", фигуры соответствующие формату: K, Q, R, N, B или не указывайте ничего для определения пешки");
 		    }
-		    //Фигура нам известа, определяем тип хода, используем для этого подготовленную заранее ф-ию(int search sym)
-		    type = searchsym(token, len, "-");
-		    //Конец работы с ходами, далее вывод и переключение строк
+		    //Фигура нам известа, определяем тип хода, используем для этого подготовленную заранее ф-ию(int searchsym)
+		    if ((searchsym(token, len, "-") == 2) || (searchsym(token, len, "-") == 1)){
+			type = searchsym(token, len, "x");
+		    } else if (searchsym(token, len, "x") == 1){
+			type = 0;
+		    } else {
+			error("Ход нестандартного формата",", попробуйте: e2-e4, e2xe4 или a1-e1-b1");	
+		    }
+		    //Конец работы с ходами, далее вывод
 		    printfield(field);
 		    printf("\n");
+		    //Сколько было матов?
+		    ended+=searchsym(token, len, "#");
+		    //Переключаем строки
 		    token = strtok_r(NULL, " ", &last);
 		}
 	    }
 	    loop++;
 	}
+	if (ended == 0){
+	    warning("Игра не закончена",", в списке ходов не был найден мат");
+	} else if (ended > 1){
+	    warning("Больше одного мата",", по пути игры было замечено несколько матов");
+	}
     } else {
 	//Ошибка говорящая сама за себя
-	printf("Файл по такому адресу не найден");
+	error("Файл по такому адресу не найден","");
     }
     return 0;
 }
