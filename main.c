@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 	"P" - Пешка
     */
     int act;
-    char act_buffer[4];
+    char* act_buffer[4];
     /*
 	Действие
 	"0" - Шах
@@ -265,15 +265,14 @@ int main(int argc, char *argv[])
 			imove = abs(from[1] - to[1]);
 			jmove = abs(from[0] - to[0]);
 			
-			//????
+			//printf("<%d:%d>\n",imove,jmove);
 			
 			//Обработка ходов
 			field[to[1]][to[0]] = field[from[1]][from[0]];
 			field[from[1]][from[0]] = " ";
 		    } else {
-		    
-			//????
-		    
+		    //Рокировки
+			
 		    }
 		    //Конец работы с ходами, далее вывод
 		    printfield(field);
