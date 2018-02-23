@@ -146,8 +146,9 @@ int main()
     file = fopen(filename,"r");
     if (file){
 	printf("\n");
+	//Переключаем строки
 	while(1){
-	    //Берём одну строку из файла
+	    //Заносим строку в переменную
 	    temp = fgets(step,sizeof(step),file);
 	    if (temp == NULL){
 		break;
@@ -194,12 +195,30 @@ int main()
 		    } else {
 			error("Ход нестандартного формата",", попробуйте: e2-e4, e2xe4 или a1-e1-b1");	
 		    }
+		    //В зависимости от типа хода, узнаём, что и куда переместить
+		    int ps;
+		    //Проверяем является ли фигура пешкой
+		    if (*(figure) == 80){
+			ps = 1;
+		    } else {
+			ps = 0;
+		    }
+		    //Делим ход на точку отправления, прибытия и в случае с рокировкой на точку кастла
+		    from[0] = token[1-ps];
+		    from[1] = token[2-ps];
+		    to[0] = token[4-ps];
+		    to[1] = token[5-ps];
+		    if (type == 2){
+			castle[0] = token[7-ps];
+			castle[1] = token[8-ps];
+		    }
+		    printf("\n(%c%c-%c%c)\n",from[0],from[1],to[0],to[1]);
 		    //Конец работы с ходами, далее вывод
 		    printfield(field);
 		    printf("\n");
 		    //Сколько было матов?
 		    ended+=searchsym(token, len, "#");
-		    //Переключаем строки
+		    //Переключаем ходы
 		    token = strtok_r(NULL, " ", &last);
 		}
 	    }
