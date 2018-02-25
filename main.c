@@ -265,6 +265,7 @@ int main(int argc, char *argv[])
 			imove = abs(from[1] - to[1]);
 			jmove = abs(from[0] - to[0]);
 			
+			
 			//printf("<%d:%d>\n",imove,jmove);
 			
 			//Обработка ходов
