@@ -1,10 +1,18 @@
+build
+bin
+chessviz
 *.o
+*.txt
+*.run
+*.swo
 .main.c.swp
 main.c~
 #main.c#*
-*.swo
-chessviz
-*.run
 .#main.c
 .#makefile
+
+
+
+
+
 

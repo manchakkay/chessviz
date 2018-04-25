@@ -1,101 +1,27 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
+#include "main.h"
 
-//Цветовые коды, можно отключить
 char* TC_W = "\033[0m";
 char* BC_R = "\033[1;31m";
-char* BC_Y = "\033[1;33m";
-char* BC_C = "\033[1;36m";
+char* B_Y = "\033[1;33m";
 char* BC_W = "\033[1;37m";
 char* BG_W = "\033[40m\033[1m";
-char* BD_W = "\033[49m\033[1m";
-int showwarning = 1;
 
-//Вывод состояния доски
-void printfield(char* field[8][8])
+//Вывод предупреждений
+void warning(char* yellow, char* white)
 {
-    int i,j;
-    for ( i = 0; i < 8; i++ ){
-	printf("%s%d%s ", BC_C, 8-i, BC_W);
-	for ( j = 0; j < 8; j++ ){
-	    if (((i+j)%2) == 1){
-		printf("%s%2c %s",BD_W,*field[i][j],TC_W);
-	    } else {
-		printf("%s%2c %s",BG_W,*field[i][j],TC_W);
-	    }
-	}
-	printf("\n");
-    }
-    printf("%s   a  b  c  d  e  f  g  h%s\n", BC_C, TC_W);
+    printf("%s(Внимание) %s%s%s%s\n",BC_W, B_Y, yellow, TC_W, white);
 }
 
-//Определение длины строки с ходом
-int tokenlen(char* token)
-{
-    int i = 0;
-    while ((token[i] != 0) && (token[i] != 10)){
-	i++;
-    }
-    return i;
-}
-
-//Поиск кол-ва символов в строке
-int searchsym(char* t, int l, char* sym)
-{
-    int i,ta,sa;
-    int c = 0;
-    sa = *sym;
-    for (i = 0; i<l; i++){
-	ta = t[i];
-	if (ta == sa){
-	    c++;
-	}
-    }
-    return c;
-}
-
+//Вывод ошибок
 void error(char* red, char* white, int errorcode)
 {
     printf("%s(Ошибка) %s%s%s%s\n",BC_W, BC_R, red, TC_W, white);
     exit(errorcode);
 }
 
-void warning(char* yellow, char* white)
-{
-    if (showwarning == 1){
-	printf("%s(Внимание) %s%s%s%s\n",BC_W, BC_Y, yellow, TC_W, white);
-    }
-}
-
+//Вывод состояния доски
 int main(int argc, char *argv[])
 {	
-    if( argc == 2 ){
-	if (strcmp(argv[1],"--no-color") == 0){
-	    TC_W = "\033[0m";
-	    BC_R = "\033[1m";
-	    BC_Y = "\033[1m";
-	    BC_C = "\033[1m";
-	    BC_W = "\033[1m";
-	    BG_W = "\033[0m";
-	    BD_W = "\033[0m";
-	} else if (strcmp(argv[1],"--no-format") == 0){
-	    TC_W = "\033[0m";
-	    BC_R = "\033[0m";
-	    BC_Y = "\033[0m";
-	    BC_C = "\033[0m";
-	    BC_W = "\033[0m";
-	    BG_W = "\033[0m";
-	    BD_W = "\033[0m";
-	} else if (strcmp(argv[1],"--no-warning") == 0){
-	    showwarning = 0;
-	} else {
-	    printf("****************************\n\033[1;33mВизуализатор шахматной доски\033[0m\n****************************\nДоступные аргументы запуска:\n\033[1;36m--no-color\033[0m - отключает цветовое форматирование при выводе\n\033[1;36m--no-format\033[0m - отключает цветовое форматирование и полужирные шрифты при выводе\n\033[1;36m--no-warning\033[0m - отключает вывод предупреждений по ходу выполнения программы\n**********************\n\033[1;33mМанчаккай Максим, 2018\033[0m\n**********************\n");
-	    exit(0);
-	}
-    }
     //ПЕРЕМЕННЫЕ
     int type;
     /*
@@ -114,16 +40,16 @@ int main(int argc, char *argv[])
 	"B" - Слон
 	"P" - Пешка
     */
-    int act;
-    char* act_buffer[4];
+    //int act;
+    //char* act_buffer[4];
     /*
 	Действие
 	"0" - Шах
 	"1" - Мат(конец игры)
 	"2" - Взятие на проходе
     */
-    int opt;
-    char pawn_swap[1];
+    //int opt;
+    //char pawn_swap[1];
     /*
 	Дополнения:
 	"0" - Отсутствуют
@@ -173,7 +99,8 @@ int main(int argc, char *argv[])
     char *temp;
     char filename[256];
     int loop = 0;
-    int count, i, imove, jmove;
+    int count, i;
+    //int imove, jmove;
     //Производим ввод файла с записью ходов
     printf("%sАдрес исходного файла:%s\n",BG_W,TC_W);
     scanf("%s",filename);
@@ -201,7 +128,7 @@ int main(int argc, char *argv[])
 		token = strtok_r(step, " ", &last);
 		for(i = 0; i <= count; i++){
 		    //Выводим ход в правильном виде, учитывая знак новой строки в конце
-		    printf ("%s%d. %s%s\n",BC_Y, loop+1, BC_W, token);
+		    printf ("%s%d. %s%s\n",B_Y, loop+1, BC_W, token);
 		    if (i != count){
 			printf("\n");
 		    }
@@ -262,8 +189,8 @@ int main(int argc, char *argv[])
 			    error("Ход совершается за пределами поля", ", допустимые значения (a-f,1-8)",4);
 			}
 			//Проверка на соответствие хода фигуре
-			imove = abs(from[1] - to[1]);
-			jmove = abs(from[0] - to[0]);
+			//imove = abs(from[1] - to[1]);
+			//jmove = abs(from[0] - to[0]);
 			
 			
 			//printf("<%d:%d>\n",imove,jmove);
