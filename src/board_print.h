@@ -1,6 +1,6 @@
 #ifndef printinclude
 #define printinclude
 
-#include <stdio.h>
+void printfield(char* [8][8]);
 
 #endif 

@@ -1,4 +1,11 @@
-#include "main.h"
+#include "searchsym.h"
+#include "board_print.h"
+#include "tokenlen.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
 
 char* TC_W = "\033[0m";
 char* BC_R = "\033[1;31m";
@@ -86,9 +93,6 @@ int main(int argc, char *argv[])
     */
     //ФУНКЦИИ
     
-    void printfield(char* [8][8]);
-    int tokenlen(char* );
-    int searchsym(char* , int, char*);
     void error(char*, char*, int);
     void warning(char*, char*);
     
@@ -100,7 +104,7 @@ int main(int argc, char *argv[])
     char filename[256];
     int loop = 0;
     int count, i;
-    //int imove, jmove;
+    int imove, jmove;
     //Производим ввод файла с записью ходов
     printf("%sАдрес исходного файла:%s\n",BG_W,TC_W);
     scanf("%s",filename);
@@ -192,11 +196,14 @@ int main(int argc, char *argv[])
 			    error("Ход совершается за пределами поля", ", допустимые значения (a-f,1-8)",4);
 			}
 			//Проверка на соответствие хода фигуре
-			//imove = abs(from[1] - to[1]);
-			//jmove = abs(from[0] - to[0]);
-			
-			
-			//printf("<%d:%d>\n",imove,jmove);
+			imove = abs(from[0] - to[0]);
+			jmove = abs(from[1] - to[1]);
+			if (strcmp(figure,"P") == 0){
+				if (((jmove == 1 && imove == 0) || (jmove == 1 && imove == 1)) || ((jmove == 2 && imove == 0) && (((from[1] == 1)&& (i == 1)) || ((from[1] == 6)&&(i == 0))))) {
+				} else {
+					error("Ошибка хода", ", обнаружено атипичное движение пешки",8);
+				}
+			}
 			
 			//Обработка ходов
 			field[to[1]][to[0]] = field[from[1]][from[0]];

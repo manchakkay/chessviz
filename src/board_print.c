@@ -1,4 +1,4 @@
-#include "board_print.h"
+#include "stdio.h"
 
 char* T_W = "\033[0m";
 char* B_C = "\033[1;36m";
